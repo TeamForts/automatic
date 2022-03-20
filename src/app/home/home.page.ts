@@ -16,7 +16,6 @@ export class HomePage {
 
 
   public getStartCoordinates(): void {
-    // eslint-disable-next-line no-underscore-dangle
     this._appService.getCoordinate().then(res =>   this._route.navigate(['/main']).then());
   }
 

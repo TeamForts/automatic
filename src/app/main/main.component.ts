@@ -10,26 +10,30 @@ import * as d3 from 'd3'
 })
 export class MainComponent implements OnInit {
 
-  public _svg: any;
+  public graph: any;
+  private _svg: any;
 
- constructor( private _appService: AppService, private _route: Router) {
+  constructor( private _appService: AppService, private _route: Router) {
 
   }
 
   ngOnInit() {
-    // eslint-disable-next-line no-underscore-dangle
     this._appService.startCoordinate$.subscribe( res => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions,no-underscore-dangle
       res ? console.log(res) : this._route.navigate(['/home']);
     });
+    this.graph = this._appService.getGraphMap();
+    console.log(this.graph);
     this._createSvg();
   }
 
-  public _createSvg(): void {
+  private _createSvg(): void {
    this._svg = d3.selectAll('figure#graph')
      .append('svg')
      .attr('width', '100%')
      .attr('height', '100%');
+  }
+
+  private _createGraph(): void{
   }
 
 
