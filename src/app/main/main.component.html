@@ -1,0 +1,33 @@
+
+
+<ion-header [translucent]="true">
+  <ion-toolbar class="toolbar">
+    <div class="toolbar__inputs">
+      <ion-item>
+        <ion-label> X coordinate:</ion-label>
+        <ion-input placeholder="Input your X coordinate"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label> Y coordinate:</ion-label>
+        <ion-input placeholder="Input your Y coordinate"></ion-input>
+      </ion-item>
+    </div>
+    <ion-button class="toolbar__button" color="primary">GO</ion-button>
+  </ion-toolbar>
+
+</ion-header>
+<ion-content>
+  <div class="custom-bg">
+    <figure id="graph">
+
+    </figure>
+  </div>
+</ion-content>
+
+<ion-tabs>
+  <ion-tab-bar [translucent]="true" slot="bottom">
+    <ion-tab-button [routerLink]="'/'">
+      <ion-icon name="home"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
