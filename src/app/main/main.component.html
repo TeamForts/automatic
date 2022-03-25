@@ -1,16 +1,18 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="toolbar">
     <div class="toolbar__inputs">
-      <ion-item>
-        <ion-label> X coordinate:</ion-label>
-        <ion-input placeholder="Input your X coordinate"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label> Y coordinate:</ion-label>
-        <ion-input placeholder="Input your Y coordinate"></ion-input>
-      </ion-item>
+      <form [formGroup]="fg">
+        <ion-item>
+          <ion-label> Start index:</ion-label>
+          <ion-input placeholder="Start index point" formControlName="startIndex"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label> End index:</ion-label>
+          <ion-input placeholder="End index point" formControlName="endIndex"></ion-input>
+        </ion-item>
+      </form>
     </div>
-    <ion-button class="toolbar__button" color="primary">GO</ion-button>
+    <ion-button class="toolbar__button" color="primary" [disabled]="!fg.valid" (click)="buildPath()">GO</ion-button>
   </ion-toolbar>
 
 </ion-header>
