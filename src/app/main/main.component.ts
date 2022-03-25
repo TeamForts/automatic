@@ -14,8 +14,8 @@ import {FormBuilder, FormGroup, Validator, Validators} from "@angular/forms";
 export class MainComponent implements OnInit {
 
   public graph: any;
-  public width: any;
-  public height: any;
+  public width: number = 700;
+  public height: number = 600;
   public fg: FormGroup;
 
   public xMin = Infinity;
@@ -37,25 +37,24 @@ export class MainComponent implements OnInit {
     private _fb: FormBuilder
   ) {
     this.createForm();
-    _platform.ready().then((readySource) => {
-     let x = 6108/_platform.width();
-     this.width = _platform.width();
-     this.height = 5650 / x;
-     this.createSvg();
-    });
+
+/*    _platform.ready().then((readySource) => {
+    // let x = 6108/_platform.width();
+    // this.width = _platform.width();
+    // this.height = 5650 / x;
+
+    });*/
   }
 
   ngOnInit() {
     this._appService.startCoordinate$.subscribe( res => {
       if ( res ){
-        this.xStart = res.x;
-        this.yStart = res.y;
-        alert(`Ваши координаты x = ${this.xStart} , y = ${this.yStart}`);
-      } else {
-        this._route.navigate(['/home']);
+          this.xStart = res.x;
+          this.yStart = res.y;
+          alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
       }
     });
-
+    this.createSvg();
 
   }
 
@@ -78,12 +77,13 @@ export class MainComponent implements OnInit {
      .attr('width', this.width)
      .attr('height', this.height)
      .attr("transform", "rotate(206)")
-     .attr("viewBox", "10 -25 145 210")
+    // .attr("viewBox", "10 -25 145 210")
+     .attr("viewBox", "-10 -20 170 200")
      .append('g')
-     .attr('class', 'links');
+     .attr('class', 'links')
    d3.select('svg')
      .append('g')
-     .attr('class', 'nodes');
+     .attr('class', 'nodes')
     d3.select('svg')
       .append('g')
       .attr('class', 'minPath')
@@ -194,6 +194,7 @@ export class MainComponent implements OnInit {
    */
   public buildPath(start = 20, end = 150): void {
 
+
     start = +this.fg.controls['startIndex'].value;
     end = +this.fg.controls['endIndex'].value;
 
@@ -263,9 +264,9 @@ export class MainComponent implements OnInit {
 
     function addEdge(vertex1, vertex2, weight = 0) {
       if (vertex1 > size - 1 || vertex2 > size - 1) {
-        console.log('invalid vertex');
+
       } else if (vertex1 === vertex2) {
-        console.log('same vertex');
+
       } else {
         matrix[vertex1][vertex2] = weight;
         matrix[vertex2][vertex1] = weight;
@@ -351,10 +352,8 @@ export class MainComponent implements OnInit {
         }
       }
     }
-    // Вывод пути (начальная вершина оказалась в конце массива из k элементов)
-    console.log("\nВывод кратчайшего пути\n");
-    for (let i = k - 1; i >= 0; i--)
-    console.log(`Ver${i} = `,ver[i]);
+
+   // for (let i = k - 1; i >= 0; i--)
 
     return ver;
   }
