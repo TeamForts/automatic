@@ -16,9 +16,9 @@
   </ion-toolbar>
 
 </ion-header>
-<ion-content>
-  <div class="map-wrapper">
-    <div class="map">
+<ion-content >
+  <div class="map-wrapper" >
+    <div class="map" (pan)="slide($event)" (dblclick)="zoom()"  >
       <figure id="graph">
 
       </figure>

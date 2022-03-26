@@ -22,9 +22,11 @@
     "@capacitor/core": "3.4.3",
     "@capacitor/geolocation": "^1.3.1",
     "@ionic/angular": "^6.0.0",
+    "@types/hammerjs": "^2.0.41",
     "as-geo-projection": "^2.1.0",
     "d3": "^7.3.0",
     "d3-force": "^3.0.0",
+    "hammerjs": "^2.0.8",
     "rxjs": "~6.6.0",
     "tslib": "^2.2.0",
     "zone.js": "~0.11.4"
