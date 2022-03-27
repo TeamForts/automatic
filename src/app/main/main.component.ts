@@ -58,7 +58,7 @@ export class MainComponent implements OnInit {
       if ( res ){
           this.xStart = res.x;
           this.yStart = res.y;
-          // alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
+          alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
       }
     });
     this.createSvg();
