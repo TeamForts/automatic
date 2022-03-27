@@ -16,9 +16,9 @@
   </ion-toolbar>
 
 </ion-header>
-<ion-content>
-  <div class="map-wrapper">
-    <div class="map">
+<ion-content >
+  <div class="map-wrapper" >
+    <div class="map" (pan)="slide($event)" (pinch) = "zoom()"  >
       <figure id="graph">
 
       </figure>
@@ -27,6 +27,7 @@
   </div>
 </ion-content>
 
+<!--
 <ion-tabs>
   <ion-tab-bar [translucent]="true" slot="bottom">
     <ion-tab-button [routerLink]="'/'">
@@ -34,3 +35,4 @@
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
+-->

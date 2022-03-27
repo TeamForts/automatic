@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {AppService} from '../entities/services/app.service';
 import {Router} from '@angular/router';
-import * as d3 from 'd3'
-import * as scale from 'd3-scale'
-import {Platform} from "@ionic/angular";
-import {FormBuilder, FormGroup, Validator, Validators} from "@angular/forms";
+import * as d3 from 'd3';
+import * as scale from 'd3-scale';
+import {Platform} from '@ionic/angular';
+import {FormBuilder, FormGroup, Validator, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-main',
@@ -14,8 +14,14 @@ import {FormBuilder, FormGroup, Validator, Validators} from "@angular/forms";
 export class MainComponent implements OnInit {
 
   public graph: any;
-  public width: any;
-  public height: any;
+  public widthDevice = 0;
+  public heightDevice = 0;
+  public widthImg = 6108;
+  public heightImg = 5650;
+  public right = 0;
+  public bottom = 0;
+  public scale = 1;
+
   public fg: FormGroup;
 
   public xMin = Infinity;
@@ -37,25 +43,25 @@ export class MainComponent implements OnInit {
     private _fb: FormBuilder
   ) {
     this.createForm();
+
     _platform.ready().then((readySource) => {
-     let x = 6108/_platform.width();
+   /*  let x = 6108/_platform.width();
      this.width = _platform.width();
-     this.height = 5650 / x;
-     this.createSvg();
+     this.height = 5650 / x;*/
+      this.widthDevice = _platform.width();
+      this.heightDevice = _platform.height();
     });
   }
 
   ngOnInit() {
-    this._appService.startCoordinate$.subscribe( res => {
+     this._appService.startCoordinate$.subscribe( res => {
       if ( res ){
-        this.xStart = res.x;
-        this.yStart = res.y;
-        alert(`Ваши координаты x = ${this.xStart} , y = ${this.yStart}`);
-      } else {
-        this._route.navigate(['/home']);
+          this.xStart = res.x;
+          this.yStart = res.y;
+          // alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
       }
     });
-
+    this.createSvg();
 
   }
 
@@ -66,7 +72,7 @@ export class MainComponent implements OnInit {
     this.fg = this._fb.group({
       startIndex: [null, Validators.required],
       endIndex: [null, Validators.required],
-    })
+    });
   }
 
   /**
@@ -75,10 +81,12 @@ export class MainComponent implements OnInit {
   public createSvg(): void {
    this._svg = d3.selectAll('figure#graph')
      .append('svg')
-     .attr('width', this.width)
-     .attr('height', this.height)
-     .attr("transform", "rotate(206)")
-     .attr("viewBox", "10 -25 145 210")
+     .attr('width', '6108px')
+     .attr('height', '5650px')
+     .attr('transform', 'rotate(207)')
+    // .attr("viewBox", "10 -25 145 210")
+    // .attr("viewBox", "-10 -20 170 200")
+     .attr('viewBox', '-22 -25 200 200')
      .append('g')
      .attr('class', 'links');
    d3.select('svg')
@@ -104,7 +112,7 @@ export class MainComponent implements OnInit {
    */
   public createGraph(): boolean {
 
-    let graph = this.graph;
+    const graph = this.graph;
 
     // Ищем минимум/максимум в координатах
 
@@ -125,12 +133,12 @@ export class MainComponent implements OnInit {
 
     // Преобразуем координаты чтобы они входили в область svg
 
-    let linearX = scale.scaleLinear()
+    const linearX = scale.scaleLinear()
       .domain([this.xMax * (-1),this.xMin * (-1) ])
-      .range([-4, 104])
-    let linearY = scale.scaleLinear()
+      .range([-10, 100]);
+    const linearY = scale.scaleLinear()
       .domain([this.yMin,this.yMax ])
-      .range([0, 100])
+      .range([0, 100]);
 
     for (let i = 0; i < this.graph.links.length; i++){
       this.graph.links[i].coords[0].x = linearX( this.graph.links[i].coords[0].x * (-1));
@@ -146,7 +154,7 @@ export class MainComponent implements OnInit {
 
     // Добавляем ребра
 
-    let links = d3.select('.links')
+    const links = d3.select('.links')
       .selectAll('line')
       .data(graph.links)
       .join('line')
@@ -154,32 +162,32 @@ export class MainComponent implements OnInit {
         return d.coords[0].x;
       })
       .attr('y1', function(d: any) {
-        return d.coords[0].y
+        return d.coords[0].y;
       })
       .attr('x2', function(d: any) {
-        return d.coords[1].x
+        return d.coords[1].x;
       })
       .attr('y2', function(d: any) {
-        return d.coords[1].y
+        return d.coords[1].y;
       })
-      .attr("stroke", "red")
-      .attr("stroke-width", 0.2);
+      .attr('stroke', 'red')
+      .attr('stroke-width', 0.2);
 
     // Добавляем вершины
 
-    let nodes = d3.select('.nodes')
+    const nodes = d3.select('.nodes')
       .selectAll('circle')
       .data(graph.nodes)
       .enter()
       .append('circle')
       .attr('cx', function(d: any) {
-        return d.x
+        return d.x;
       })
       .attr('cy', function(d: any) {
-        return d.y
+        return d.y;
       })
       .attr('r', function(d) {
-        return 0.1
+        return 0.1;
       })
       .attr('fill','green');
 
@@ -189,13 +197,15 @@ export class MainComponent implements OnInit {
 
   /**
    * Строим путь от начальной точки до конечной
+   *
    * @param start - индекс начальной точки
    * @param end - индекс конечной точки
    */
   public buildPath(start = 20, end = 150): void {
 
-    start = +this.fg.controls['startIndex'].value;
-    end = +this.fg.controls['endIndex'].value;
+
+    start = +this.fg.controls.startIndex.value;
+    end = +this.fg.controls.endIndex.value;
 
     if ( this.graph.nodes.find( el => start === el.index) && this.graph.nodes.find( el => end === el.index) )
     {
@@ -204,27 +214,25 @@ export class MainComponent implements OnInit {
         .remove();
       let indexNodes = this.getPath(this.createAdjacencyMatrix(), start, end);
 
-      indexNodes = indexNodes.map(indexNode => {
-        return this.graph.nodes.find(node => {
+      indexNodes = indexNodes.map(indexNode => this.graph.nodes.find(node => {
           if (node.index === indexNode) {
             // console.log(node.index);
             return node;
           }
-        })
-      }).reverse();
+        })).reverse();
 
-      let line = d3.line()
-        .x(function (d: any) {
+      const line = d3.line()
+        .x(function(d: any) {
           return d.x;
         })
-        .y(function (d: any) {
+        .y(function(d: any) {
           return d.y;
         });
-      let path = d3.select('.minPath')
+      const path = d3.select('.minPath')
         .append('path')
-        .attr("d", line(indexNodes))
-        .attr("stroke", "white")
-        .attr("stroke-width", 1)
+        .attr('d', line(indexNodes))
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1)
         .attr('fill', 'none');
     } else {
       alert('Индекс должен быть числом от 0 до 198');
@@ -234,16 +242,17 @@ export class MainComponent implements OnInit {
 
   /**
    * Создание матрицы смежности из графа
+   *
    * @private
    */
   public createAdjacencyMatrix(): any {
-    let matrix = [];
-    let size =  this.graph.nodes.length;
+    const matrix = [];
+    const size =  this.graph.nodes.length;
 
     this.graph.links = this.graph.links.map( el => {
       el.weight = Math.trunc(el.weight);
       return el;
-    })
+    });
 
     for (let i = 0; i < size; i++) {
       matrix.push([]);
@@ -255,17 +264,17 @@ export class MainComponent implements OnInit {
     this.graph.nodes.forEach( ( node ) => {
         this.graph.links.forEach( (el) => {
            if ( node.id === el.source || node.id === el.target) {
-             let targetNode = this.graph.nodes.find( node => node.id === el.target);
+             const targetNode = this.graph.nodes.find( node => node.id === el.target);
               addEdge(node.index, targetNode.index, el.weight);
            }
-        })
-    })
+        });
+    });
 
     function addEdge(vertex1, vertex2, weight = 0) {
       if (vertex1 > size - 1 || vertex2 > size - 1) {
-        console.log('invalid vertex');
+
       } else if (vertex1 === vertex2) {
-        console.log('same vertex');
+
       } else {
         matrix[vertex1][vertex2] = weight;
         matrix[vertex2][vertex1] = weight;
@@ -277,16 +286,17 @@ export class MainComponent implements OnInit {
 
   /**
    * Алгоритм поиска минимального пути
+   *
    * @param matrix матрица смежности
    * @param start индекс начальной точки
    * @param end индекс конечной точки
    */
 
   public getPath(matrix, start = 0, end = 1): any {
-    let minDistance = []; // минимальное расстояние
-    let visitedNodes = []; // посещенные вершины
-    let temp, minindex, min;
-    let begin_index = start;
+    const minDistance = []; // минимальное расстояние
+    const visitedNodes = []; // посещенные вершины
+    let temp; let minindex; let min;
+    const begin_index = start;
 
     //Инициализация вершин и расстояний
     for (let i = 0; i < matrix.length; i++) {
@@ -332,16 +342,16 @@ export class MainComponent implements OnInit {
 
 
     // Восстановление пути
-    let ver = []; // массив посещенных вершин
+    const ver = []; // массив посещенных вершин
     ver[0] = end; // начальный элемент - конечная вершина
     let k = 1; // индекс предыдущей вершины
     let weight = minDistance[end]; // вес конечной вершины
     // пока не дошли до начальной вершины
     while (end != begin_index) {
       for (let i = 0; i < matrix.length; i++) // просматриваем все вершины
-      if (matrix[i][end] != 0)   // если связь есть
+      {if (matrix[i][end] != 0)   // если связь есть
       {
-        let temp = weight - matrix[i][end]; // определяем вес пути из предыдущей вершины
+        const temp = weight - matrix[i][end]; // определяем вес пути из предыдущей вершины
         if (temp == minDistance[i]) // если вес совпал с рассчитанным
         {                 // значит из этой вершины и был переход
           weight = temp; // сохраняем новый вес
@@ -349,15 +359,58 @@ export class MainComponent implements OnInit {
           ver[k] = i; // и записываем ее в массив
           k++;
         }
-      }
+      }}
     }
-    // Вывод пути (начальная вершина оказалась в конце массива из k элементов)
-    console.log("\nВывод кратчайшего пути\n");
-    for (let i = k - 1; i >= 0; i--)
-    console.log(`Ver${i} = `,ver[i]);
+
+   // for (let i = k - 1; i >= 0; i--)
 
     return ver;
   }
 
+  public slide(e: any){
+    if ( this.scale === 1) {
+      if ( this.bottom - e.deltaY + this.heightDevice < this.heightImg && this.bottom - e.deltaY  > 0){
+        this.bottom = ( this.bottom - e.deltaY );
+        d3.select('.map')
+          .style('bottom',`${this.bottom}px`);
+      }
+      if (this.right - e.deltaX + this.widthDevice < this.widthImg && this.right - e.deltaX > 0) {
+        this.right = ( this.right - e.deltaX );
+        d3.select('.map')
+          .style('right',`${this.right}px`);
+      }
+    }
+
+  }
+
+  public zoom(): void {
+    if ( this.scale === 1) {
+      this.scale = 0.11;
+      /*this.right = this.widthImg / 2 - 458.1; // 2595.9px
+      this.bottom = this.heightImg / 2 - 423.75; // 2401.25px
+      this.widthImg = this.widthImg * 0.15;
+      this.heightImg = this.heightImg * 0.15;*/
+      this.right = 2920;
+      this.bottom = 2600;
+
+      d3.select('.map')
+        .style('bottom',`${ this.bottom }px`)
+        .style('right',`${ this.right}px`)
+        .style('transform',`scale(${this.scale})`);
+        // .attr('transform', `translate(${6108 * this.scale}, ${5650 * this.scale})`);
+    } else {
+      this.scale = 1;
+      this.bottom = 0;
+      this.right = 0;
+      this.widthImg = 6108;
+      this.heightImg = 5650;
+      d3.select('.map')
+        .style('bottom',`${this.bottom}px`)
+        .style('right',`${this.right}px`)
+        .style('transform',`scale(${this.scale})`);
+       // .attr('transform', `translate(${6108 * this.scale}, ${5650 * this.scale})`);
+    }
+
+  }
 }
 
