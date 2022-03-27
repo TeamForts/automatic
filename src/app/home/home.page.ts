@@ -16,9 +16,11 @@ export class HomePage {
 
 
   public getStartCoordinates(): void {
-    this._appService.getCoordinate().then(res =>  {
-      this._route.navigate(['/main']).then();
-    }
-    )};
+  //  this._appService.getCoordinate().then(res =>  {
+  //    this._route.navigate(['/main']).then();
+  //  }
+  //  )
+   this._route.navigate(['/main']).then();
+  };
 
 }
