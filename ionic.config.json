@@ -1,5 +1,7 @@
 {
   "name": "GpsDriver",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

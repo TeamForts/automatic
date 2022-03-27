@@ -14,8 +14,10 @@ import {FormBuilder, FormGroup, Validator, Validators} from '@angular/forms';
 export class MainComponent implements OnInit {
 
   public graph: any;
-  public width = 700;
-  public height = 600;
+  public widthDevice = 0;
+  public heightDevice = 0;
+  public widthImg = 6108;
+  public heightImg = 5650;
   public right = 0;
   public bottom = 0;
   public scale = 1;
@@ -46,17 +48,17 @@ export class MainComponent implements OnInit {
    /*  let x = 6108/_platform.width();
      this.width = _platform.width();
      this.height = 5650 / x;*/
-      this.width = _platform.width();
-      this.height = _platform.height();
+      this.widthDevice = _platform.width();
+      this.heightDevice = _platform.height();
     });
   }
 
   ngOnInit() {
-    this._appService.startCoordinate$.subscribe( res => {
+     this._appService.startCoordinate$.subscribe( res => {
       if ( res ){
           this.xStart = res.x;
           this.yStart = res.y;
-          alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
+          // alert(`Ваши координаты x = ${res.x} , y = ${res.y}`);
       }
     });
     this.createSvg();
@@ -366,38 +368,48 @@ export class MainComponent implements OnInit {
   }
 
   public slide(e: any){
-    if ( this.bottom - e.deltaY + this.height < 5650 && this.bottom - e.deltaY  > 0){
-      this.bottom = ( this.bottom - e.deltaY );
-      d3.select('.map')
-        .style('bottom',`${this.bottom}px`);
+    if ( this.scale === 1) {
+      if ( this.bottom - e.deltaY + this.heightDevice < this.heightImg && this.bottom - e.deltaY  > 0){
+        this.bottom = ( this.bottom - e.deltaY );
+        d3.select('.map')
+          .style('bottom',`${this.bottom}px`);
+      }
+      if (this.right - e.deltaX + this.widthDevice < this.widthImg && this.right - e.deltaX > 0) {
+        this.right = ( this.right - e.deltaX );
+        d3.select('.map')
+          .style('right',`${this.right}px`);
+      }
     }
-    if (this.right - e.deltaX + this.width < 6108 && this.right - e.deltaX > 0) {
-      this.right = ( this.right - e.deltaX );
-      d3.select('.map')
-        .style('right',`${this.right}px`);
-    }
+
   }
 
   public zoom(): void {
-  /*  if ( this.scale === 1) {
-     // this.bottom = this.bottom * 0.2;
-      // this.right = this.right * 0.2;
-      this.scale = 0.2;
+    if ( this.scale === 1) {
+      this.scale = 0.11;
+      /*this.right = this.widthImg / 2 - 458.1; // 2595.9px
+      this.bottom = this.heightImg / 2 - 423.75; // 2401.25px
+      this.widthImg = this.widthImg * 0.15;
+      this.heightImg = this.heightImg * 0.15;*/
+      this.right = 2920;
+      this.bottom = 2600;
+
       d3.select('.map')
-        .style('bottom',`${0}px`)
-        .style('right',`${0}px`)
+        .style('bottom',`${ this.bottom }px`)
+        .style('right',`${ this.right}px`)
         .style('transform',`scale(${this.scale})`);
         // .attr('transform', `translate(${6108 * this.scale}, ${5650 * this.scale})`);
     } else {
-      // this.bottom = this.bottom * 5;
-      // this.right = this.right * 5;
       this.scale = 1;
+      this.bottom = 0;
+      this.right = 0;
+      this.widthImg = 6108;
+      this.heightImg = 5650;
       d3.select('.map')
-        .style('bottom',`${0}px`)
-        .style('right',`${0}px`)
+        .style('bottom',`${this.bottom}px`)
+        .style('right',`${this.right}px`)
         .style('transform',`scale(${this.scale})`);
        // .attr('transform', `translate(${6108 * this.scale}, ${5650 * this.scale})`);
-    }*/
+    }
 
   }
 }
